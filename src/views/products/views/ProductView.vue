@@ -1,7 +1,7 @@
 <template>
   <div class="product-view">
-    <input class="product-view--search-input" placeholder="Search product" v-model="keyword"
-           @keyup.enter="search(keyword)"/>
+    <BFormInput class="product-view--search-input" :debounce="300" placeholder="Search product" v-model="keyword"
+                @keyup.enter="search(keyword)" @update="search(keyword)"/>
     <div>
       <h1 v-if="loading && products.length===0" class="loading">Loading...</h1>
       <h1 v-else-if="errorMsg" class="error">{{ errorMsg }}</h1>
@@ -14,10 +14,10 @@
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import { Product, ProductRepository, ProductRepositoryImpl } from '@/core/product'
 import ProductListing from '@/views/products/components/ProductListing.vue'
-import debounce from 'lodash/debounce'
+import { BFormInput } from 'bootstrap-vue'
 
 @Component({
-  components: { ProductListing }
+  components: { ProductListing, BFormInput }
 })
 export default class ProductView extends Vue {
   private static readonly SIZE = 20;
@@ -70,10 +70,6 @@ export default class ProductView extends Vue {
 
   protected get isUpdating (): boolean {
     return this.loading && this.products.length > 0
-  }
-
-  private get canLoadMore (): boolean {
-    return this.total >= 0 && this.total !== this.from
   }
 
   private handleScroll () {
